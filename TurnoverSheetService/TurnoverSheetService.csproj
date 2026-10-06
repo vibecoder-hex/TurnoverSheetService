@@ -5,6 +5,7 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+        <UserSecretsId>0abe557e-747f-48a2-853a-914e68adcf1a</UserSecretsId>
     </PropertyGroup>
 
     <ItemGroup>
@@ -25,8 +26,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
-      <Folder Include="Repositories\" />
+      <Folder Include="Migrations\" />
     </ItemGroup>
 
 </Project>

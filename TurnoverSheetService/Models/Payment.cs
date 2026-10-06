@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TurnoverSheetService;
+﻿
+namespace TurnoverSheetService.Models;
 
 public partial class Payment
 {

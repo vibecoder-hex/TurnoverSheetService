@@ -1,11 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace TurnoverSheetService;
+﻿
+namespace TurnoverSheetService.Models;
 
 public partial class Saldo
 {
     public Guid SaldoUuid { get; set; }
+    
+    public string Description { get; set; } = null!;
 
     public int ApartmentNumber { get; set; }
 
