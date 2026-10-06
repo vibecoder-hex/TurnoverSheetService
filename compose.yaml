@@ -1,0 +1,7 @@
+﻿services:
+  turnoversheetservice:
+    image: turnoversheetservice
+    build:
+      context: .
+      dockerfile: TurnoverSheetService/Dockerfile
+
