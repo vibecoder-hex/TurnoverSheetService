@@ -8,7 +8,7 @@ namespace TurnoverSheetService.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class PersonalAccountSaldoController : ControllerBase
+public class PersonalAccountSaldoController : ControllerBase 
 {
     private readonly ISaldoCalculationService _saldoService;
     private readonly IApartmentSaldoRepository _saldoRepository;
@@ -21,7 +21,7 @@ public class PersonalAccountSaldoController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post([FromBody] CreateApartmentSaldoDto dto)
     {
-        var serviceResult = await _saldoService.CalculateNewOutcomingSaldoByIncoming(dto);
+        var serviceResult = await _saldoService.CalculateNewSaldoOnFutureDate(dto);
         return Ok(serviceResult);
     }
 

@@ -76,8 +76,7 @@ public partial class TurnoverSheetDbContext : DbContext
                 .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
                 .HasColumnName("saldoUUID");
             entity.Property(e => e.ApartmentNumber).HasColumnName("apartmentNumber");
-            entity.Property(e => e.IncomingSaldo).HasColumnName("incomingSaldo");
-            entity.Property(e => e.OutcomingSaldo).HasColumnName("outcomingSaldo");
+            entity.Property(e => e.CurrentSaldoValue).HasColumnName("сurrentSaldoValue");
             entity.Property(e => e.PaymentDate).HasColumnName("paymentDate");
             entity.Property(e => e.Description)
                 .HasMaxLength(40)

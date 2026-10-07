@@ -4,72 +4,61 @@ using TurnoverSheetService.Models;
 
 namespace TurnoverSheetService.Services;
 
-public class ServiceResult<T>
-{
-    private T? _resultObject;
-    private string? _errorMessage;
-    private bool _isSuccess;
-    
-
-    public static ServiceResult<T> Success(T data)
-    {
-        return new ServiceResult<T>
-        {
-            _isSuccess =  true,
-            _resultObject = data
-        };
-    }
-
-    public static ServiceResult<T> Failure(string errorMessage)
-    {
-        return new ServiceResult<T>
-        {
-            _isSuccess = false,
-            _errorMessage = errorMessage
-        };
-    }
-}
-
 public interface ISaldoCalculationService
 {
-    Task<ServiceResult<string>> CalculateNewOutcomingSaldoByIncoming(CreateApartmentSaldoDto saldo);
+    Task<ServiceResult<string>> CalculateNewSaldoOnFutureDate(CreateApartmentSaldoDto saldo);
 }
 
 public class SaldoCalculationService : ISaldoCalculationService
 {
-    private IApartmentSaldoRepository _saldoRepository;
+    private readonly IApartmentSaldoRepository _saldoRepository;
+    private readonly IApartmentPaymentsRepository _paymentsRepository;
+    private readonly IApartmentChargesRepository _chargesRepository;
 
-    public SaldoCalculationService(IApartmentSaldoRepository repository)
+    public SaldoCalculationService(IApartmentSaldoRepository repository, IApartmentPaymentsRepository paymentsRepository, IApartmentChargesRepository chargesRepository)
     {
         _saldoRepository = repository;
+        _paymentsRepository = paymentsRepository;
+        _chargesRepository = chargesRepository;
     }
 
-    public async Task<ServiceResult<string>> CalculateNewOutcomingSaldoByIncoming(CreateApartmentSaldoDto saldo)
+    public async Task<ServiceResult<string>> CalculateNewSaldoOnFutureDate(CreateApartmentSaldoDto saldo)
     {
         try
         {
-            var lastCalculatedSaldo = await _saldoRepository.ReadLastSaldoByApartmentNumber(saldo.AppartmentNumber);
-            if (lastCalculatedSaldo == null)
+            var lastCalculatedSaldo = await _saldoRepository.ReadLastSaldoByApartmentNumber(saldo.ApartmentNumber);
+            if (lastCalculatedSaldo != null)
             {
-                await _saldoRepository.CreateSaldo(
-                    saldo.AppartmentNumber,
-                    saldo.IncomingSaldo,
-                    saldo.OutcomingSaldo,
-                    saldo.Description);
+                int lastSaldoPaymentMonth = lastCalculatedSaldo.PaymentDate.Month;
+
+                var paymentByMonth = await _paymentsRepository.GetPaymentForApartmentByMonth(saldo.ApartmentNumber, lastSaldoPaymentMonth);
+                var chargeByMonth = await _chargesRepository.GetChargeForApartmentByMonth(saldo.ApartmentNumber, lastSaldoPaymentMonth);
+
+                if (paymentByMonth != null && chargeByMonth != null)
+                {
+                    decimal sumOfPayments = paymentByMonth.SumOfAmounts;
+                    decimal sumOfCharges = chargeByMonth.SumOfAmounts;
+                    
+                    decimal lastMonthSaldo = lastCalculatedSaldo.CurrentSaldoValue;
+                    decimal futureMonthSaldo = lastMonthSaldo + sumOfCharges - sumOfPayments;
+                
+                    await _saldoRepository.CreateSaldo(
+                        saldo.ApartmentNumber,
+                        futureMonthSaldo,
+                        saldo.Description);
+                }
+                else
+                {
+                    return ServiceResult<string>.Failure(
+                        $"Не удалось найти общую сумму начислений/платежей по заданной квартере {saldo.ApartmentNumber}");
+                }
             }
             else
             {
-                const decimal charge = 3000;
-                const decimal payment = 1500;
-
-                decimal incomingSaldo = lastCalculatedSaldo.IncomingSaldo;
-                decimal outcomingSaldo = incomingSaldo + charge - payment;
-
-                await _saldoRepository.CreateSaldo(saldo.AppartmentNumber, incomingSaldo, outcomingSaldo,
-                    saldo.Description);
+                await _saldoRepository.CreateSaldo(saldo.ApartmentNumber, saldo.CurrentSaldoValue, saldo.Description);
             }
             
-            return ServiceResult<string>.Success($"Сальдо на квартиру {saldo.AppartmentNumber} успешно создано");
+            return ServiceResult<string>.Success($"Сальдо на квартиру {saldo.ApartmentNumber} успешно создано");
             
         }
         catch (DbUpdateException ex)

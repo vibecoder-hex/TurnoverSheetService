@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TurnoverSheetService.Migrations
 {
     /// <inheritdoc />
-    public partial class Switchedfromuniqindexes : Migration
+    public partial class Joined2saldofieldstoone : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -49,8 +49,7 @@ namespace TurnoverSheetService.Migrations
                     description = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     apartmentNumber = table.Column<int>(type: "integer", nullable: false),
                     paymentDate = table.Column<DateOnly>(type: "date", nullable: false),
-                    incomingSaldo = table.Column<decimal>(type: "numeric", nullable: false),
-                    outcomingSaldo = table.Column<decimal>(type: "numeric", nullable: false)
+                    сurrentSaldoValue = table.Column<decimal>(type: "numeric", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -64,7 +63,7 @@ namespace TurnoverSheetService.Migrations
                 .Annotation("Npgsql:IndexMethod", "btree");
 
             migrationBuilder.CreateIndex(
-                name: "idx_payments",
+                name: "idx_payment",
                 table: "payments",
                 columns: new[] { "apartmentNumber", "paymentDate" })
                 .Annotation("Npgsql:IndexMethod", "btree");

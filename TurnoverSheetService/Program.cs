@@ -14,6 +14,8 @@ builder.Services.AddDbContextPool<TurnoverSheetDbContext>(options => options.Use
 builder.Services.AddHttpLogging(options => { });
 
 builder.Services.AddScoped<IApartmentSaldoRepository, ApartmentSaldoRepository>();
+builder.Services.AddScoped<IApartmentChargesRepository, ApartmentChargesRepository>();
+builder.Services.AddScoped<IApartmentPaymentsRepository, ApartmentPaymentsRepository>();
 builder.Services.AddScoped<ISaldoCalculationService, SaldoCalculationService>();
 
 var app = builder.Build();

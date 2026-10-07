@@ -11,7 +11,6 @@ public partial class Saldo
 
     public DateOnly PaymentDate { get; set; }
 
-    public decimal IncomingSaldo { get; set; }
-
-    public decimal OutcomingSaldo { get; set; }
+    public decimal CurrentSaldoValue { get; set; }
+    
 }
