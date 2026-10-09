@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using TurnoverSheetService.Services.DbContextConfiguration;
@@ -11,9 +12,11 @@ using TurnoverSheetService.Services.DbContextConfiguration;
 namespace TurnoverSheetService.Migrations
 {
     [DbContext(typeof(TurnoverSheetDbContext))]
-    partial class TurnoverSheetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20261009081515_added_unq_indexes_for_saldo")]
+    partial class added_unq_indexes_for_saldo
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

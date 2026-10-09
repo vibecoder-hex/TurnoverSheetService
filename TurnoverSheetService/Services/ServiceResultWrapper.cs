@@ -2,17 +2,17 @@ namespace TurnoverSheetService.Services;
 
 public class ServiceResult<T>
 {
-    private T? _resultObject;
-    private string? _errorMessage;
-    private bool _isSuccess;
-    
+    public T? ResultObject { get; init; }
+    public string? ErrorMessage { get; init; }
+    public bool IsSuccess { get; init; }
+
 
     public static ServiceResult<T> Success(T data)
     {
         return new ServiceResult<T>
         {
-            _isSuccess =  true,
-            _resultObject = data
+            IsSuccess =  true,
+            ResultObject = data
         };
     }
 
@@ -20,8 +20,8 @@ public class ServiceResult<T>
     {
         return new ServiceResult<T>
         {
-            _isSuccess = false,
-            _errorMessage = errorMessage
+            IsSuccess = false,
+            ErrorMessage = errorMessage
         };
     }
 }

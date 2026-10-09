@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using TurnoverSheetService.Services.DbContextConfiguration;
 using TurnoverSheetService.Repositories;
-using TurnoverSheetService.Services;
+using TurnoverSheetService.Services.DomainServices;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,10 +13,14 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContextPool<TurnoverSheetDbContext>(options => options.UseNpgsql(dbConnectionString));
 builder.Services.AddHttpLogging(options => { });
 
-builder.Services.AddScoped<IApartmentSaldoRepository, ApartmentSaldoRepository>();
-builder.Services.AddScoped<IApartmentChargesRepository, ApartmentChargesRepository>();
-builder.Services.AddScoped<IApartmentPaymentsRepository, ApartmentPaymentsRepository>();
+builder.Services.AddScoped<ISaldoRepository, ApartmentSaldoRepository>();
+builder.Services.AddScoped<IChargesRepository, ApartmentChargesRepository>();
+builder.Services.AddScoped<IPaymentsRepository, ApartmentPaymentsRepository>();
+builder.Services.AddScoped<IApartmentsRepository, ApartmentsRepository>();
+
 builder.Services.AddScoped<ISaldoCalculationService, SaldoCalculationService>();
+builder.Services.AddScoped<IApartmentManagementService, ApartmentManagementService>();
+builder.Services.AddScoped<IPaymentManagementService, PaymentManagementService>();
 
 var app = builder.Build();
 
