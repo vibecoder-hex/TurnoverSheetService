@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using TurnoverSheetService.Models.Presentation;
 using TurnoverSheetService.Services.DomainServices;
 
-namespace TurnoverSheetService.Controllers;
+namespace TurnoverSheetService.Controllers.DomainControllers;
 
 [ApiController]
 [Route("api/[controller]")]

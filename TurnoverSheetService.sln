@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		compose.yaml = compose.yaml
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TurnoverSheetServiceTests", "TurnoverSheetServiceTests\TurnoverSheetServiceTests.csproj", "{E2F22C82-95DE-4A90-A585-369F1D8F7868}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -17,5 +19,9 @@ Global
 		{D5139B09-D85B-4775-A484-06421BCA5D26}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D5139B09-D85B-4775-A484-06421BCA5D26}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D5139B09-D85B-4775-A484-06421BCA5D26}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2F22C82-95DE-4A90-A585-369F1D8F7868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2F22C82-95DE-4A90-A585-369F1D8F7868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2F22C82-95DE-4A90-A585-369F1D8F7868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2F22C82-95DE-4A90-A585-369F1D8F7868}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

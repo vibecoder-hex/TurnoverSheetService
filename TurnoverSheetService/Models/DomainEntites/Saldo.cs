@@ -78,7 +78,7 @@ public partial class Saldo
             return ServiceResult<string>.Failure("Платеж по заданному времени не найдено");
         
         _payments.Remove(existingPayment);
-        RecalculateSaldoValue(-existingPayment.Amount, 0);
+        RecalculateSaldoValue(0, -existingPayment.Amount);
         return ServiceResult<string>.Success("Платеж по данному времени удалено");
     }
 }
