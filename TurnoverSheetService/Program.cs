@@ -1,3 +1,4 @@
+using EntityFramework.Exceptions.PostgreSQL;
 using Microsoft.EntityFrameworkCore;
 using TurnoverSheetService.Services.DbContextConfiguration;
 using TurnoverSheetService.Repositories;
@@ -10,17 +11,19 @@ string dbConnectionString = builder.Configuration["DatabaseConnection:Connection
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddDbContextPool<TurnoverSheetDbContext>(options => options.UseNpgsql(dbConnectionString));
+builder.Services.AddDbContextPool<TurnoverSheetDbContext>(options => 
+    options
+        .UseNpgsql(dbConnectionString)
+        .UseExceptionProcessor());
+
 builder.Services.AddHttpLogging(options => { });
 
-builder.Services.AddScoped<ISaldoRepository, ApartmentSaldoRepository>();
-builder.Services.AddScoped<IChargesRepository, ApartmentChargesRepository>();
-builder.Services.AddScoped<IPaymentsRepository, ApartmentPaymentsRepository>();
-builder.Services.AddScoped<IApartmentsRepository, ApartmentsRepository>();
+builder.Services.AddScoped<IRootAggregateCommandRepository, AggregateCommandRepository>();
+builder.Services.AddScoped<IRootAggregateQueryRepository, AggregateQueryRepository>();
 
-builder.Services.AddScoped<ISaldoCalculationService, SaldoCalculationService>();
 builder.Services.AddScoped<IApartmentManagementService, ApartmentManagementService>();
-builder.Services.AddScoped<IPaymentManagementService, PaymentManagementService>();
+builder.Services.AddScoped<ISaldoManagementService, SaldoManagementService>();
+builder.Services.AddScoped<IChargeManagementService, ChargeManagementService>();
 
 var app = builder.Build();
 

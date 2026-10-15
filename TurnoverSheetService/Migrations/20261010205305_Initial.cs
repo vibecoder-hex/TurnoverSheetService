@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace TurnoverSheetService.Migrations
 {
     /// <inheritdoc />
-    public partial class added_unq_indexes_for_saldo : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -15,13 +15,13 @@ namespace TurnoverSheetService.Migrations
                 name: "apartments",
                 columns: table => new
                 {
-                    ApartmentGuid = table.Column<Guid>(type: "uuid", nullable: false),
+                    apartmentUuid = table.Column<Guid>(type: "uuid", nullable: false),
                     number = table.Column<int>(type: "integer", nullable: false),
                     address = table.Column<string>(type: "character varying(120)", maxLength: 120, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("apartment_pkey", x => x.ApartmentGuid);
+                    table.PrimaryKey("apartment_pkey", x => x.apartmentUuid);
                 });
 
             migrationBuilder.CreateTable(
@@ -29,7 +29,7 @@ namespace TurnoverSheetService.Migrations
                 columns: table => new
                 {
                     saldoUUID = table.Column<Guid>(type: "uuid", nullable: false),
-                    description = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    saldoServiceType = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     ApartmentUuid = table.Column<Guid>(type: "uuid", nullable: false),
                     calculatingDate = table.Column<DateOnly>(type: "date", nullable: false),
                     сurrentSaldoValue = table.Column<decimal>(type: "numeric", nullable: false)
@@ -41,7 +41,7 @@ namespace TurnoverSheetService.Migrations
                         name: "saldo_apartment_fk",
                         column: x => x.ApartmentUuid,
                         principalTable: "apartments",
-                        principalColumn: "ApartmentGuid",
+                        principalColumn: "apartmentUuid",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -50,8 +50,7 @@ namespace TurnoverSheetService.Migrations
                 columns: table => new
                 {
                     chargeUUID = table.Column<Guid>(type: "uuid", nullable: false),
-                    amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    description = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
+                    Amount = table.Column<decimal>(type: "numeric", nullable: false),
                     SaldoUuid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -71,7 +70,6 @@ namespace TurnoverSheetService.Migrations
                 {
                     paymentUUID = table.Column<Guid>(type: "uuid", nullable: false),
                     amount = table.Column<decimal>(type: "numeric", nullable: false),
-                    description = table.Column<string>(type: "character varying(40)", maxLength: 40, nullable: false),
                     SaldoUuid = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
@@ -104,7 +102,7 @@ namespace TurnoverSheetService.Migrations
             migrationBuilder.CreateIndex(
                 name: "idx_saldo_unq",
                 table: "saldo",
-                columns: new[] { "ApartmentUuid", "calculatingDate", "description" },
+                columns: new[] { "ApartmentUuid", "calculatingDate", "saldoServiceType" },
                 unique: true);
         }
 

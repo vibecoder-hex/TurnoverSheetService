@@ -12,8 +12,8 @@ using TurnoverSheetService.Services.DbContextConfiguration;
 namespace TurnoverSheetService.Migrations
 {
     [DbContext(typeof(TurnoverSheetDbContext))]
-    [Migration("20261009081515_added_unq_indexes_for_saldo")]
-    partial class added_unq_indexes_for_saldo
+    [Migration("20261014153305_added unq datetimes for payments and charges")]
+    partial class addedunqdatetimesforpaymentsandcharges
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -25,11 +25,12 @@ namespace TurnoverSheetService.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Apartment", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Apartment", b =>
                 {
                     b.Property<Guid>("ApartmentGuid")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
+                        .HasColumnType("uuid")
+                        .HasColumnName("apartmentUuid");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -44,13 +45,13 @@ namespace TurnoverSheetService.Migrations
                     b.HasKey("ApartmentGuid")
                         .HasName("apartment_pkey");
 
-                    b.HasIndex("Number")
+                    b.HasIndex("Number", "Address")
                         .IsUnique();
 
                     b.ToTable("apartments", (string)null);
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Charge", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Charge", b =>
                 {
                     b.Property<Guid>("ChargeUuid")
                         .ValueGeneratedOnAdd()
@@ -61,11 +62,9 @@ namespace TurnoverSheetService.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("amount");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("description");
+                    b.Property<DateTime>("ChargeTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("chargeTime");
 
                     b.Property<Guid>("SaldoUuid")
                         .HasColumnType("uuid");
@@ -73,12 +72,16 @@ namespace TurnoverSheetService.Migrations
                     b.HasKey("ChargeUuid")
                         .HasName("charges_pkey");
 
+                    b.HasIndex("ChargeTime")
+                        .IsUnique()
+                        .HasDatabaseName("idx_unq_charge");
+
                     b.HasIndex("SaldoUuid");
 
                     b.ToTable("charges", (string)null);
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Payment", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Payment", b =>
                 {
                     b.Property<Guid>("PaymentUuid")
                         .ValueGeneratedOnAdd()
@@ -89,11 +92,9 @@ namespace TurnoverSheetService.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("amount");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(40)
-                        .HasColumnType("character varying(40)")
-                        .HasColumnName("description");
+                    b.Property<DateTime>("PaymentTime")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("paymentTime");
 
                     b.Property<Guid>("SaldoUuid")
                         .HasColumnType("uuid");
@@ -101,12 +102,16 @@ namespace TurnoverSheetService.Migrations
                     b.HasKey("PaymentUuid")
                         .HasName("payments_pkey");
 
+                    b.HasIndex("PaymentTime")
+                        .IsUnique()
+                        .HasDatabaseName("idx_unq_payment");
+
                     b.HasIndex("SaldoUuid");
 
                     b.ToTable("payments", (string)null);
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Saldo", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Saldo", b =>
                 {
                     b.Property<Guid>("SaldoUuid")
                         .ValueGeneratedOnAdd()
@@ -124,25 +129,25 @@ namespace TurnoverSheetService.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("сurrentSaldoValue");
 
-                    b.Property<string>("Description")
+                    b.Property<string>("ServiceType")
                         .IsRequired()
                         .HasMaxLength(40)
                         .HasColumnType("character varying(40)")
-                        .HasColumnName("description");
+                        .HasColumnName("saldoServiceType");
 
                     b.HasKey("SaldoUuid")
                         .HasName("saldoId_pk");
 
-                    b.HasIndex("ApartmentUuid", "CalculatingDate", "Description")
+                    b.HasIndex("ApartmentUuid", "CalculatingDate", "ServiceType")
                         .IsUnique()
-                        .HasDatabaseName("idx_saldo_unq");
+                        .HasDatabaseName("idx_unq_saldo");
 
                     b.ToTable("saldo", (string)null);
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Charge", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Charge", b =>
                 {
-                    b.HasOne("TurnoverSheetService.Models.DatabaseEntites.Saldo", "Saldo")
+                    b.HasOne("TurnoverSheetService.Models.DomainEntites.Saldo", "Saldo")
                         .WithMany("Charges")
                         .HasForeignKey("SaldoUuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -152,9 +157,9 @@ namespace TurnoverSheetService.Migrations
                     b.Navigation("Saldo");
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Payment", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Payment", b =>
                 {
-                    b.HasOne("TurnoverSheetService.Models.DatabaseEntites.Saldo", "Saldo")
+                    b.HasOne("TurnoverSheetService.Models.DomainEntites.Saldo", "Saldo")
                         .WithMany("Payments")
                         .HasForeignKey("SaldoUuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -164,9 +169,9 @@ namespace TurnoverSheetService.Migrations
                     b.Navigation("Saldo");
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Saldo", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Saldo", b =>
                 {
-                    b.HasOne("TurnoverSheetService.Models.DatabaseEntites.Apartment", "Apartment")
+                    b.HasOne("TurnoverSheetService.Models.DomainEntites.Apartment", "Apartment")
                         .WithMany("Saldos")
                         .HasForeignKey("ApartmentUuid")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -176,12 +181,12 @@ namespace TurnoverSheetService.Migrations
                     b.Navigation("Apartment");
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Apartment", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Apartment", b =>
                 {
                     b.Navigation("Saldos");
                 });
 
-            modelBuilder.Entity("TurnoverSheetService.Models.DatabaseEntites.Saldo", b =>
+            modelBuilder.Entity("TurnoverSheetService.Models.DomainEntites.Saldo", b =>
                 {
                     b.Navigation("Charges");
 

@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TurnoverSheetService.Models.DatabaseEntites;
+using TurnoverSheetService.Models.DomainEntites;
 using Npgsql.EntityFrameworkCore.PostgreSQL.ValueGeneration;
 
 namespace TurnoverSheetService.Services.DbContextConfiguration;
@@ -25,11 +25,11 @@ public partial class TurnoverSheetDbContext : DbContext
         {
             entity.HasKey(e => e.ApartmentGuid).HasName("apartment_pkey");
             
-            entity.HasIndex(e => e.Number).IsUnique();
+            entity.HasIndex(e => new {e.Number, e.Address}).IsUnique();
             
             entity.ToTable("apartments");
             
-            entity.Property(e => e.Number)
+            entity.Property(e => e.ApartmentGuid)
                 .HasColumnName("apartmentUuid");
             entity.Property(e => e.Number)
                 .HasColumnName("number");
@@ -37,6 +37,7 @@ public partial class TurnoverSheetDbContext : DbContext
                 .HasMaxLength(120)
                 .HasColumnName("address");
             
+
         });
         modelBuilder.Entity<Charge>(entity =>
         {
@@ -47,10 +48,15 @@ public partial class TurnoverSheetDbContext : DbContext
             entity.Property(e => e.ChargeUuid)
                 .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
                 .HasColumnName("chargeUUID");
+            
             entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.Description)
-                .HasMaxLength(40)
-                .HasColumnName("description");
+
+            entity.Property(e => e.ChargeDate)
+                .HasColumnName("chargeDate");
+            
+            entity.HasIndex(e => e.ChargeDate)
+                .HasName("idx_unq_charge")
+                .IsUnique();
             
             entity.HasOne(d => d.Saldo)
                 .WithMany(p => p.Charges)
@@ -67,10 +73,15 @@ public partial class TurnoverSheetDbContext : DbContext
             entity.Property(e => e.PaymentUuid)
                 .HasValueGenerator<NpgsqlSequentialGuidValueGenerator>()
                 .HasColumnName("paymentUUID");
+            
             entity.Property(e => e.Amount).HasColumnName("amount");
-            entity.Property(e => e.Description)
-                .HasMaxLength(40)
-                .HasColumnName("description");
+            
+            entity.Property(e => e.PaymentDate)
+                .HasColumnName("paymentDate");
+            
+            entity.HasIndex(e => e.PaymentDate)
+                .HasName("idx_unq_payment")
+                .IsUnique();
             
             entity.HasOne(d => d.Saldo)
                 .WithMany(p => p.Payments)
@@ -82,8 +93,8 @@ public partial class TurnoverSheetDbContext : DbContext
         {
             entity.HasKey(e => e.SaldoUuid).HasName("saldoId_pk");
             
-            entity.HasIndex(e => new {e.ApartmentUuid, e.CalculatingDate, e.Description })
-                .HasName("idx_saldo_unq")
+            entity.HasIndex(e => new { e.ApartmentUuid, e.CalculatingDate, e.ServiceType })
+                .HasName("idx_unq_saldo")
                 .IsUnique();
 
             entity.ToTable("saldo");
@@ -93,9 +104,9 @@ public partial class TurnoverSheetDbContext : DbContext
                 .HasColumnName("saldoUUID");
             entity.Property(e => e.CurrentSaldoValue).HasColumnName("сurrentSaldoValue");
             entity.Property(e => e.CalculatingDate).HasColumnName("calculatingDate");
-            entity.Property(e => e.Description)
+            entity.Property(e => e.ServiceType)
                 .HasMaxLength(40)
-                .HasColumnName("description");
+                .HasColumnName("saldoServiceType");
             
             entity.HasOne(d => d.Apartment)
                 .WithMany(p => p.Saldos)

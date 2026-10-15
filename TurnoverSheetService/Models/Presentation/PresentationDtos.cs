@@ -1,23 +1,51 @@
 namespace TurnoverSheetService.Models.Presentation;
 
 //ApartmentDtos
-public record CreateApartmentControllerDto(int Number, string Address);
-public record ReadApartmentControllerDto(int Number, string Address);
+public record CreateApartmentRequestDto(int Number, string Address);
+public record ReadApartmentResponseDto(int Number, string Address, List<ReadSaldoResponseDto> Saldos);
 
+//SaldoDtos
+public record CreateSaldoRequestDto(string ServiceType, decimal IncomingSaldoValue, int ApartmentNumber, string ApartmentAddress);
+public record DeleteSaldoRequestDto(string ServiceType, DateOnly CalculatingDate, int ApartmentNumber, string ApartmentAddress);
 
-// Saldo dtos
-public record CreateSaldoControllerDto(int ApartmentNumber, decimal CurrentSaldoValue, DateOnly CalculatingDate, string Description);
-public record ReadSaldoControllerDto(
-    DateOnly CalculationDate,
-    decimal CurrentSaldoValue,
-    string Description,
-    decimal TotalCharge,
-    decimal TotalPayment);
+public record ReadSaldoResponseDto(
+    string ServiceType,
+    decimal OutcomingSaldoValue,
+    DateOnly CalculatingDate,
+    List<ReadChargeResponseDto> Charges,
+    List<ReadPaymentResponseDto> Payments);
 
-// Charge dtos    
-public record CreateChargeControllerDto(decimal Amount, string Description);
-public record ReadChargeControllerDto(decimal Amount, string Description);
+//ChargeDtos
+public record CreateChargeRequestDto(
+    decimal Amount,
+    string SaldoServiceType,
+    DateOnly SaldoCalculatingDate, 
+    int ApartmentNumber,
+    string ApartmentAddress);
 
-// Payment dtos
-public record CreatePaymentControllerDto(decimal Amount, string Description);
-public record ReadPaymentControllerDto(decimal Amount, string Description);
+public record DeleteChargeRequestDto(
+    DateOnly ChargeDate,
+    string SaldoServiceType,
+    DateOnly SaldoCalculatingDate,
+    int ApartmentNumber,
+    string ApartmentAddress);
+
+public record ReadChargeResponseDto(decimal Amount, DateOnly ChargeDate);
+
+//PaymentDtos
+public record CreatePaymentRequestDto(
+    decimal Amount,
+    string SaldoServiceType,
+    DateOnly SaldoCalculatingDate,
+    int ApartmentNumber,
+    string ApartmentAddress);
+
+public record ReadPaymentResponseDto(decimal Amount, DateOnly PaymentDate);
+
+public record DeletePaymentRequestDto(
+    DateOnly PaymentDate,
+    string SaldoServiceType,
+    DateOnly SaldoCalculatingDate,
+    int ApartmentNumber,
+    string ApartmentAddress);
+

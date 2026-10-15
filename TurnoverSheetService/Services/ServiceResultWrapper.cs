@@ -2,8 +2,8 @@ namespace TurnoverSheetService.Services;
 
 public class ServiceResult<T>
 {
-    public T? ResultObject { get; init; }
-    public string? ErrorMessage { get; init; }
+    public T ResultObject { get; init; }
+    public string ErrorMessage { get; init; }
     public bool IsSuccess { get; init; }
 
 
